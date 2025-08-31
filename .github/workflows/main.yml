@@ -27,9 +27,9 @@ jobs:
         run: docker push Adityanc/my-ace-app:latest
 
       - name: Set up Kubeconfig for deployment
-        uses: actions/create-kubeconfig@v1
-        with:
-          kubeconfig-secrets: ${{ secrets.KUBE_CONFIG }}
+        run: |
+         mkdir -p ~/.kube
+         echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
 
       - name: Deploy to Kubernetes
         run: |
