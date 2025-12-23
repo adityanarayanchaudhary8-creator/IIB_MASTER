@@ -1,0 +1,59 @@
+pipeline {
+    // This ensures the job ONLY runs on your new ACE agent
+    agent { 
+        label 'ACE_BUILD_NODE' 
+    }
+
+    environment {
+        // Paths for your local machine
+        ACE_PATH = 'C:\Program Files\IBM\ACE\13.0.2.0\server\bin'
+        PROJECT_NAME = 'LOG4J' // <-- Change to your actual App folder name
+        BAR_NAME = 'LOG4J1.bar'
+		NODE_NAME = DEV3
+        IS_SERVER = 'IntegrationServer1'          // <-- Change to your Integration Server name
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                // Pulls the latest code from your GitHub repository
+                checkout scm
+                echo "Successfully pulled code from Git."
+            }
+        }
+
+        stage('Build BAR') {
+            steps {
+                script {
+                    echo "Starting ACE Build for ${PROJECT_NAME}..."
+                    // 'bat' runs Windows commands. We must call mqsiprofile first.
+                    bat """
+                        call "${ACE_PATH}\\mqsiprofile.cmd"
+                        ibmint package --input-path . --output-bar-file ${BAR_NAME} --project ${PROJECT_NAME}
+                    """
+                }
+            }
+        }
+
+        stage('Deploy to ACE') {
+            steps {
+                script {
+                    echo "Deploying ${BAR_NAME} to Server: ${IS_SERVER}..."
+                    bat """
+                        call "${ACE_PATH}\\mqsiprofile.cmd"
+                        mqsideploy -i localhost -p 4417 -n ${NODE_NAME} -e ${IS_SERVER} -a ${BAR_NAME}
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Deployment Completed Successfully!"
+        }
+        failure {
+            echo "Deployment Failed. Please check the Console Output."
+        }
+    }
+}
