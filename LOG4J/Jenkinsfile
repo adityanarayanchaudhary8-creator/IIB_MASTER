@@ -6,7 +6,7 @@ pipeline {
 
     environment {
         // Paths for your local machine
-        ACE_PATH = 'C:\Program Files\IBM\ACE\13.0.2.0\server\bin'
+        ACE_PATH = 'C:\\Program Files\\IBM\ACE\\13.0.2.0\\server\\bin'
         PROJECT_NAME = 'LOG4J' // <-- Change to your actual App folder name
         BAR_NAME = 'LOG4J1.bar'
 		NODE_NAME = DEV3
