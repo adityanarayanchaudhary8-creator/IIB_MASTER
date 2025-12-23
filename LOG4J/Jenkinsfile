@@ -41,7 +41,7 @@ pipeline {
                     echo "Deploying ${BAR_NAME} to Server: ${IS_SERVER}..."
                     bat """
                         call "${ACE_PATH}\\mqsiprofile.cmd"
-                        mqsideploy -i localhost -p 4417 -n ${NODE_NAME} -e ${IS_SERVER} -a ${BAR_NAME}
+                        mqsideploy -i localhost -p 4417 -e ${IS_SERVER} -a ${BAR_NAME}
                     """
                 }
             }
